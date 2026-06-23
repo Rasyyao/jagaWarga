@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Env
+.env
+
+# Model (terlalu besar untuk git)
+models/
+!models/.gitkeep
+
+# Dataset
+data/
+!data/.gitkeep
+!data/intent_dataset.csv.example
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Docker
+*.log
