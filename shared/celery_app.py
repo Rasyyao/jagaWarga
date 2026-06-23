@@ -7,6 +7,9 @@ celery_app = Celery(
     "jagawarga",
     broker=settings.CELERY_BROKER_URL,
     backend=settings.CELERY_RESULT_BACKEND,
-    include=["agent_input_handler.tasks"],
+    include=[
+        "agent_input_handler.tasks",
+        "agent_hoaks.tasks",
+        "agent_pengaduan.tasks",
+    ],
 )
-

@@ -1,6 +1,6 @@
 from shared.enums import InputType, IntentLabel, ReportType, PipelineStatus
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import List, Optional
 from datetime import datetime
 
 class IncomingMessage(BaseModel):
@@ -23,4 +23,28 @@ class PipelineContext(BaseModel):
     cache_hit : bool = False
     status : PipelineStatus = PipelineStatus.RECEIVED
     metadata: dict =Field(default_factory=dict)
+
+class ClaimExtraction(BaseModel):
+    claims: List[str]
+    context: str
+
+
+class SearchResult(BaseModel):
+    url: str
+    title: str
+    snippet: str
+    date: Optional[str] = None
+
+class PengaduanResult(BaseModel):
+    status: str
+    source: List[SearchResult]
+    laporan_text: str
+    reasoning: str
+    confidence: float
+
+class HoaxResult(BaseModel):
+    hoax_topic: str
+    data_source: List[SearchResult]
+    reasoning: str
+    confidence: float
     
