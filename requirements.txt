@@ -34,5 +34,8 @@ groq
 # Google Search
 google-search-results==2.4.2
 
+# Browser scraping for Agent Penipuan URL checker
+playwright==1.49.0
+
 # Dev
 python-dotenv==1.0.1
