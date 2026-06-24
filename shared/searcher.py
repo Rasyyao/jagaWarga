@@ -1,6 +1,21 @@
 import os
 from typing import List, Dict
-from serpapi import GoogleSearch
+
+
+def _serpapi_search(params: dict) -> dict:
+    try:
+        from serpapi import GoogleSearch
+
+        return GoogleSearch(params).get_dict()
+    except ImportError:
+        import serpapi
+
+        results = serpapi.search(params)
+        if hasattr(results, "as_dict"):
+            return results.as_dict()
+        if isinstance(results, dict):
+            return results
+        return dict(results)
 
 
 def web_search(query: str, whitelist: List[str], num_results: int = 10) -> List[Dict[str, str]]:
@@ -17,7 +32,7 @@ def web_search(query: str, whitelist: List[str], num_results: int = 10) -> List[
         "hl": "id",
     }
 
-    organic = GoogleSearch(params).get_dict().get("organic_results", [])
+    organic = _serpapi_search(params).get("organic_results", [])
 
     return [
         {

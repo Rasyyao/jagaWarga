@@ -30,10 +30,12 @@ class Settings(BaseSettings):
     CLASSIFIER_DROP_THRESHOLD: float = 0.70
 
     # LLM
-    LLM_PROVIDER: str = "groq"
+    LLM_PROVIDER: str = "deepseek"
     LLM_API_KEY: str
-    LLM_MODEL: str = "llama-3.1-8b-instant"
+    LLM_BASE_URL: str = "https://api.deepseek.com"
+    LLM_MODEL: str = "deepseek-chat"
     LLM_TIMEOUT: int = 30
+    LLM_MAX_TOKENS: int = 4096
 
     # Semantic dedup
     DEDUP_SIMILARITY_THRESHOLD: float = 0.90
@@ -47,8 +49,16 @@ class Settings(BaseSettings):
 
     SERPAPI_KEY: str
 
+    # Agent Penipuan URL checker
+    URL_CHECK_BROWSER: str = "firefox"
+    URL_CHECK_HEADLESS: bool = True
+    URL_CHECK_TIMEOUT_MS: int = 15000
+    URL_CHECK_MAX_TEXT_CHARS: int = 6000
+    URL_CHECK_USE_LLM: bool = True
+
     class Config:
         env_file = ".env"
+        extra = "ignore"
 
 @lru_cache()
 def get_settings() -> Settings:

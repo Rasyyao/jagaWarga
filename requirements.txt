@@ -24,12 +24,18 @@ numpy
 pandas
 scikit-learn
 
-# LLM
-groq
-
 # Database
 sqlalchemy==2.0.36
 pgvector==0.3.2
+
+# LLM
+groq
+
+# Google Search
+google-search-results==2.4.2
+
+# Browser scraping for Agent Penipuan URL checker
+playwright==1.49.0
 
 # Dev
 python-dotenv==1.0.1
