@@ -48,3 +48,7 @@ class HoaxResult(BaseModel):
     reasoning: str
     confidence: float
     
+class IntentResult(BaseModel):
+    label: IntentLabel
+    confidence: float
+    all_scores: dict[str, float]

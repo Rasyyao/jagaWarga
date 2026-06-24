@@ -1,89 +1,58 @@
-import csv
-import os
-import numpy as np
-from sentence_transformers import SentenceTransformer
+import torch
+import torch.nn.functional as F
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from shared.enums import IntentLabel
 from shared.schemas import IntentResult
 from shared.config import get_settings
 
 settings = get_settings()
 
-MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
-_model: SentenceTransformer | None = None
+MODEL_PATH = settings.CLASSIFIER_MODEL_PATH  # ./models/indobert-intent
+MAX_LENGTH = 128
 
-def get_model() -> SentenceTransformer:
-    global _model
-    if _model is None:
-        _model = SentenceTransformer(MODEL_NAME)
-    return _model
+_tokenizer = None
+_model = None
 
-
-DATASET_PATH = os.path.join(
-    os.path.dirname(__file__),    
-    "..", "..", "data",           
-    "intent_dataset.csv"
-)
-
-def load_label_examples() -> dict[IntentLabel, list[str]]:
-    """
-    Baca intent_dataset.csv, kelompokkan teks per label.
-    Format CSV: text,label
-    """
-    examples: dict[IntentLabel, list[str]] = {label: [] for label in IntentLabel}
-
-    with open(DATASET_PATH, encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            text = row.get("text", "").strip()
-            label_str = row.get("label", "").strip()
-
-            if not text or not label_str:
-                continue  # skip baris kosong
-
-            try:
-                label = IntentLabel(label_str)
-                examples[label].append(text)
-            except ValueError:
-                continue  
-
-    return examples
-
-_label_embeddings: dict[IntentLabel, np.ndarray] | None = None
-
-def _get_label_embeddings() -> dict[IntentLabel, np.ndarray]:
-    global _label_embeddings
-    if _label_embeddings is not None:
-        return _label_embeddings
-
-    model = get_model()
-    label_examples = load_label_examples()
-    _label_embeddings = {}
-
-    for label, examples in label_examples.items():
-        if not examples:
-            continue
-        embeddings = model.encode(examples, normalize_embeddings=True)
-        mean_embedding = embeddings.mean(axis=0)
-        mean_embedding = mean_embedding / (np.linalg.norm(mean_embedding) + 1e-10)
-        _label_embeddings[label] = mean_embedding
-
-    return _label_embeddings
+def _get_model():
+    global _tokenizer, _model
+    if _tokenizer is None or _model is None:
+        print(f"Loading IndoBERT dari: {MODEL_PATH}")
+        _tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+        _model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
+        _model.eval()
+    return _tokenizer, _model
 
 
+# ── Classifier ─────────────────────────────────────────────────────────────────
 def classify_intent(text: str) -> IntentResult:
-    model = get_model()
-    label_embeddings = _get_label_embeddings()
+    tokenizer, model = _get_model()
 
-    input_embedding = model.encode(text, normalize_embeddings=True)
+    inputs = tokenizer(
+        text,
+        max_length=MAX_LENGTH,
+        truncation=True,
+        padding=True,
+        return_tensors="pt",
+    )
 
-    scores: dict[str, float] = {}
-    for label, label_emb in label_embeddings.items():
-        similarity = float(np.dot(input_embedding, label_emb))
-        scores[label.value] = round(similarity, 4)
+    with torch.no_grad():
+        outputs = model(**inputs)
+        probs = F.softmax(outputs.logits, dim=-1).squeeze()
 
-    best_label_value = max(scores, key=scores.get)
-    best_score = scores[best_label_value]
-    best_label = IntentLabel(best_label_value)
+    id2label = model.config.id2label
+
+    scores = {
+        id2label[i]: round(probs[i].item(), 4)
+        for i in range(len(id2label))
+    }
+
+    best_label_str = max(scores, key=scores.get)
+    best_score = scores[best_label_str]
+
+    try:
+        best_label = IntentLabel(best_label_str)
+    except ValueError:
+        best_label = IntentLabel.TIDAK_RELEVAN
 
     return IntentResult(
         label=best_label,

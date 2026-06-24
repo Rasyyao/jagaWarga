@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     # IndoBERT
     CLASSIFIER_MODEL_PATH: str = "./models/indobert-intent"
     CLASSIFIER_CONFIDENCE_THRESHOLD: float = 0.65
-    CLASSIFIER_DROP_THRESHOLD: float = 0.80
+    CLASSIFIER_DROP_THRESHOLD: float = 0.70
 
     # LLM
     LLM_PROVIDER: str = "groq"

@@ -1,0 +1,91 @@
+version: "3.9"
+
+services:
+  # ── Redis ──────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: jagawarga-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── PostgreSQL + pgvector ──────────────────────────────────────────────────
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: jagawarga-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: jagawarga
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: jagawarga
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jagawarga"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── Celery Worker ──────────────────────────────────────────────────────────
+  worker:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.worker
+    container_name: jagawarga-worker
+    env_file:
+      - ../.env
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ..:/app                          # hot reload kode
+      - ../models:/app/models            # mount model IndoBERT
+    command: >
+      celery -A shared.celery_app.celery_app worker
+      -Q pipeline,agents,validation,broadcast
+      -c 2
+      -l info
+
+  # ── FastAPI ────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.api
+    container_name: jagawarga-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../.env
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ..:/app                          # hot reload kode
+      - ../models:/app/models
+    command: uvicorn agent_input_handler.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # ── Flower (Celery monitor) ────────────────────────────────────────────────
+  flower:
+    image: mher/flower:2.0
+    container_name: jagawarga-flower
+    ports:
+      - "5555:5555"
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+
+volumes:
+  redis_data:
+  postgres_data:
