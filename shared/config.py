@@ -7,10 +7,12 @@ class Settings(BaseSettings):
     APP_ENV: str = "development"
     DEBUG: bool = False
 
-    # WhatsApp Cloud API
-    WA_PHONE_NUMBER_ID: str
-    WA_ACCESS_TOKEN: str
-    WA_VERIFY_TOKEN: str
+    # KIRIM API KEY
+    KIRIMI_ID_API_KEY : str
+    KIRIMI_DEVICE_ID : str
+    KIRIMI_USER_CODE : str
+    WA_BOT_NUMBER: str = ""
+    KIRIMI_BASE_URL: str = "https://api.kirimi.id"
 
     # Celery + Redis
     REDIS_URL: str = "redis://localhost:6379/0"
