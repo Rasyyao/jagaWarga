@@ -304,37 +304,41 @@ Dataset: 283 baris · 5 label · fine-tune 10 epoch · ~7 menit (Apple M-series)
 # App
 APP_ENV=development
 DEBUG=true
+KIRIMI_BASE_URL=
 
-# WhatsApp — kirimi.id
-WA_PHONE_NUMBER_ID=your_device_id
-WA_ACCESS_TOKEN=your_api_key
-WA_VERIFY_TOKEN=your_verify_token
+KIRIMI_ID_API_KEY=
+KIRIMI_DEVICE_ID=
+KIRIMI_USER_CODE=
+WA_BOT_NUMBER=
 
 # Celery + Redis
 REDIS_URL=redis://localhost:6379/0
 CELERY_BROKER_URL=redis://localhost:6379/0
 CELERY_RESULT_BACKEND=redis://localhost:6379/1
 
-# PostgreSQL
+# PostgreSQL + pgvector
 DATABASE_URL=postgresql+asyncpg://jagawarga:password@localhost:5432/jagawarga
 
 # IndoBERT
 CLASSIFIER_MODEL_PATH=./models/indobert-intent
-CLASSIFIER_CONFIDENCE_THRESHOLD=0.35
-CLASSIFIER_DROP_THRESHOLD=0.65
+CLASSIFIER_CONFIDENCE_THRESHOLD=0.65
+CLASSIFIER_DROP_THRESHOLD=0.80
 
 # LLM
 LLM_PROVIDER=groq
-LLM_API_KEY=your_groq_key
+LLM_API_KEY=
 LLM_MODEL=llama-3.1-8b-instant
 LLM_TIMEOUT=30
+
+# Semantic dedup
+DEDUP_SIMILARITY_THRESHOLD=0.90
+DEDUP_CACHE_TTL=604800
 
 # OCR
 OCR_PROVIDER=llm
 
-# External
+# External (agent_penipuan)
 VIRUSTOTAL_API_KEY=
-SERPAPI_KEY=
 ```
 
 ---
