@@ -1,7 +1,7 @@
 from typing import List, Dict
 from shared.llm import call_llm
 from shared.utils import safe_json_parse
-from agent_pengaduan.schemas import ClaimExtraction
+from shared.schemas import ClaimExtraction
 
 
 EXTRACT_MESSAGES: List[Dict[str, str]] = lambda text: [

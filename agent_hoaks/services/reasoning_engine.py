@@ -1,7 +1,7 @@
 from typing import List, Dict
 from shared.llm import call_llm
 from shared.utils import safe_json_parse
-from agent_hoaks.schemas import HoaxResult, SearchResult
+from shared.schemas import HoaxResult, SearchResult
 
 
 def reason_hoax(claims: List[str], search_results: List[Dict[str, str]]) -> HoaxResult:

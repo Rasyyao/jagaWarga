@@ -1,7 +1,7 @@
 from typing import List, Dict
 from shared.llm import call_llm
 from shared.utils import safe_json_parse
-from agent_pengaduan.schemas import PengaduanResult, SearchResult
+from shared.schemas import PengaduanResult, SearchResult
 
 
 def generate_report(complaint_text: str, search_results: List[Dict[str, str]]) -> PengaduanResult:
