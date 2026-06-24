@@ -24,9 +24,12 @@ numpy
 pandas
 scikit-learn
 
-# Database (skip asyncpg kalau Python 3.13)
+# Database
 sqlalchemy==2.0.36
 pgvector==0.3.2
+
+# LLM
+groq
 
 # Dev
 python-dotenv==1.0.1

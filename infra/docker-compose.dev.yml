@@ -1,7 +1,17 @@
 version: "3.9"
 
+# ── Development setup ──────────────────────────────────────────────────────────
+# Docker hanya untuk: Redis + PostgreSQL + Flower
+# FastAPI + Celery worker jalan LOKAL di Mac (pakai .venv)
+#
+# Cara jalankan:
+#   docker compose -f infra/docker-compose.dev.yml up -d
+#
+# Lalu di terminal terpisah:
+#   celery -A shared.celery_app.celery_app worker -Q pipeline -c 2 -l info
+#   uvicorn agent_input_handler.main:app --reload --port 8000
+
 services:
-  # ── Redis ──────────────────────────────────────────────────────────────────
   redis:
     image: redis:7-alpine
     container_name: jagawarga-redis
@@ -15,7 +25,6 @@ services:
       timeout: 3s
       retries: 5
 
-  # ── PostgreSQL + pgvector ──────────────────────────────────────────────────
   postgres:
     image: pgvector/pgvector:pg16
     container_name: jagawarga-postgres
@@ -33,49 +42,6 @@ services:
       timeout: 3s
       retries: 5
 
-  # ── Celery Worker ──────────────────────────────────────────────────────────
-  worker:
-    build:
-      context: ..
-      dockerfile: infra/Dockerfile.worker
-    container_name: jagawarga-worker
-    env_file:
-      - ../.env
-    depends_on:
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    volumes:
-      - ..:/app                          # hot reload kode
-      - ../models:/app/models            # mount model IndoBERT
-    command: >
-      celery -A shared.celery_app.celery_app worker
-      -Q pipeline,agents,validation,broadcast
-      -c 2
-      -l info
-
-  # ── FastAPI ────────────────────────────────────────────────────────────────
-  api:
-    build:
-      context: ..
-      dockerfile: infra/Dockerfile.api
-    container_name: jagawarga-api
-    ports:
-      - "8000:8000"
-    env_file:
-      - ../.env
-    depends_on:
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    volumes:
-      - ..:/app                          # hot reload kode
-      - ../models:/app/models
-    command: uvicorn agent_input_handler.main:app --host 0.0.0.0 --port 8000 --reload
-
-  # ── Flower (Celery monitor) ────────────────────────────────────────────────
   flower:
     image: mher/flower:2.0
     container_name: jagawarga-flower

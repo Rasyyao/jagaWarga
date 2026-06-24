@@ -25,11 +25,11 @@
 JagaWarga adalah sistem multi-agent AI yang memungkinkan warga melaporkan penipuan, hoaks, dan pengaduan layanan publik melalui WhatsApp. Sistem ini menggunakan IndoBERT yang di-fine-tune untuk klasifikasi intent bahasa Indonesia, dan memproses laporan secara asynchronous menggunakan Celery.
 
 **Fitur utama:**
-- 🤖 Intent classification dengan IndoBERT (fine-tuned)
+- 🤖 Intent classification dengan IndoBERT (fine-tuned, 100% accuracy)
 - 📱 Integrasi WhatsApp via kirimi.id
 - ⚡ Async processing dengan Celery + Redis
 - 🔍 Semantic deduplication laporan
-- 👥 Session management per user
+- 👥 Session management per user dengan command system
 - 🗄️ Vector storage dengan pgvector
 
 ---
@@ -75,10 +75,10 @@ Agent Validator → Agent Broadcaster
 | API | FastAPI + Uvicorn |
 | Queue | Celery + Redis |
 | NLP | IndoBERT (`indobenchmark/indobert-base-p1`) fine-tuned |
-| Embeddings | `paraphrase-multilingual-MiniLM-L12-v2` |
 | Vector DB | PostgreSQL + pgvector |
 | WhatsApp | kirimi.id |
-| Infra | Docker Compose + Nginx |
+| Infra (dev) | Docker (Redis + PostgreSQL + Flower) |
+| Infra (prod) | Docker Compose + Nginx |
 | Training | HuggingFace Trainer + MPS (Apple Silicon) |
 
 ---
@@ -125,11 +125,11 @@ jagawarga/
 │   └── test_intent_classifier.py    # Test suite classifier
 │
 ├── infra/
-│   ├── docker-compose.yml           # Production
-│   ├── docker-compose.dev.yml       # Development
-│   ├── Dockerfile.api               # Image FastAPI
-│   ├── Dockerfile.worker            # Image Celery worker
-│   └── nginx.conf                   # Reverse proxy
+│   ├── docker-compose.yml           # Production (semua service)
+│   ├── docker-compose.dev.yml       # Development (Redis + PG + Flower only)
+│   ├── Dockerfile.api               # Image FastAPI (production)
+│   ├── Dockerfile.worker            # Image Celery worker (production)
+│   └── nginx.conf                   # Reverse proxy (production)
 │
 ├── .env.example
 ├── requirements.txt
@@ -150,6 +150,7 @@ cd jagawarga
 ### 2. Setup virtual environment
 
 ```bash
+# Wajib Python 3.11 — asyncpg tidak support Python 3.13
 python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -165,16 +166,19 @@ cp .env.example .env
 ### 4. Fine-tune IndoBERT
 
 ```bash
+# Pastikan data/intent_dataset.csv sudah ada
 python scripts/train_classifier.py
+
 # Model tersimpan di models/indobert-intent/
 # Estimasi waktu: 5-10 menit (Apple Silicon MPS)
 ```
 
-### 5. Jalankan infrastruktur
+### 5. Jalankan infrastruktur via Docker
 
 ```bash
-# Jalankan Redis + PostgreSQL
-docker compose -f infra/docker-compose.dev.yml up redis postgres -d
+# Hanya Redis + PostgreSQL + Flower
+# FastAPI + Celery jalan lokal di Mac
+docker compose -f infra/docker-compose.dev.yml up -d
 
 # Cek status
 docker compose -f infra/docker-compose.dev.yml ps
@@ -184,24 +188,23 @@ docker compose -f infra/docker-compose.dev.yml ps
 
 ## Menjalankan Project
 
-### Development (tanpa Docker)
+### Development workflow (4 terminal)
 
 ```bash
-# Terminal 1 — Celery worker
-celery -A shared.celery_app.celery_app worker -Q pipeline,agents -c 2 -l info
+# Terminal 1 — Infra (Redis + PG + Flower)
+docker compose -f infra/docker-compose.dev.yml up -d
 
-# Terminal 2 — FastAPI
+# Terminal 2 — Celery worker
+celery -A shared.celery_app.celery_app worker -Q pipeline -c 2 -l info
+
+# Terminal 3 — FastAPI
 uvicorn agent_input_handler.main:app --reload --port 8000
 
-# Terminal 3 — Expose ke internet (untuk kirimi.id webhook)
+# Terminal 4 — Expose ke internet (untuk kirimi.id webhook)
 ngrok http 8000
 ```
 
-### Development (dengan Docker)
-
-```bash
-docker compose -f infra/docker-compose.dev.yml up -d
-```
+**Monitor Celery:** buka `http://localhost:5555` (Flower)
 
 ### Production
 
@@ -214,27 +217,28 @@ docker compose -f infra/docker-compose.yml up -d --build
 ## Flow Pengguna
 
 ```
-User chat pertama kali
-→ Bot: "Halo! Ketik /daftar untuk registrasi"
+User chat pertama kali (apapun)
+→ Bot: "Halo! Ketik /daftar untuk registrasi atau /help untuk bantuan"
 
 /daftar
 → Bot: "Ketik nama lengkap kamu"
 → User: "Budi Santoso"
 → Bot: "Ketik alamat kamu"
 → User: "Purwokerto Utara"
-→ Bot: "Terdaftar! Ketik /start untuk laporan"
+→ Bot: "✅ Terdaftar! Ketik /start untuk laporan"
 
 /start
 → Bot: "Sesi laporan dimulai! Kirim laporan kamu..."
 → User kirim teks / foto / link (boleh lebih dari satu)
+→ Bot: "📥 Pesan diterima! Lanjutkan atau ketik /end"
 
 /end
-→ Bot: "Laporan diterima! Sedang diproses..."
-→ Pipeline berjalan di background
-→ Bot kirim hasil analisis
+→ Bot: "✅ Laporan diterima! Sedang diproses..."
+→ Semua pesan di-batch → masuk Celery pipeline
+→ Bot kirim hasil analisis setelah selesai
 ```
 
-**Commands yang tersedia:**
+**Commands:**
 
 | Command | Fungsi |
 |---|---|
@@ -290,6 +294,8 @@ python tests/test_intent_classifier.py
 | spam | 100% |
 | **Overall** | **100%** |
 
+Dataset: 283 baris · 5 label · fine-tune 10 epoch · ~7 menit (Apple M-series)
+
 ---
 
 ## Environment Variables
@@ -325,11 +331,14 @@ LLM_TIMEOUT=30
 
 # OCR
 OCR_PROVIDER=llm
+
+# External
+VIRUSTOTAL_API_KEY=
+SERPAPI_KEY=
 ```
 
 ---
 
 ## Author
 
-**Naufal Qathafa Rasya Hidayat** — IntechCode Enterprise
 SMK Telkom Purwokerto · LKS Nasional Eksibisi AI 2026
