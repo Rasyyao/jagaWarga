@@ -24,15 +24,12 @@ numpy
 pandas
 scikit-learn
 
-# Database
-sqlalchemy==2.0.36
-pgvector==0.3.2
-
 # LLM
 groq
 
-# Google Search
-google-search-results==2.4.2
+# Database
+sqlalchemy==2.0.36
+pgvector==0.3.2
 
 # Dev
 python-dotenv==1.0.1

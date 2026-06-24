@@ -7,7 +7,7 @@ from shared.config import get_settings
 
 settings = get_settings()
 
-MODEL_PATH = settings.CLASSIFIER_MODEL_PATH  # ./models/indobert-intent
+MODEL_PATH = settings.CLASSIFIER_MODEL_PATH 
 MAX_LENGTH = 128
 
 _tokenizer = None
@@ -23,7 +23,6 @@ def _get_model():
     return _tokenizer, _model
 
 
-# ── Classifier ─────────────────────────────────────────────────────────────────
 def classify_intent(text: str) -> IntentResult:
     tokenizer, model = _get_model()
 

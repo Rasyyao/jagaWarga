@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
     CELERY_BROKER_URL: str = "redis://localhost:6379/0"
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379/1"
+    
+    GOOGLE_VISION_API_KEY : str
 
     # PostgreSQL + pgvector
     DATABASE_URL: str = "postgresql+asyncpg://jagawarga:password@localhost:5432/jagawarga"
