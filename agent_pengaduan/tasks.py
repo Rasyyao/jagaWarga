@@ -4,6 +4,8 @@ from shared.enums import PipelineStatus
 from agent_pengaduan.services.claim_extractor import extract_claim
 from agent_pengaduan.services.web_searcher import search_complaint
 from agent_pengaduan.services.report_generator import generate_report
+from agent_pengaduan.services.automated_report import submit_report, ReportPayload
+import asyncio
 
 
 @celery_app.task(name="agent_pengaduan.process")
@@ -21,7 +23,18 @@ def process_pengaduan(context_dict: dict) -> dict:
     search_results = search_complaint(extraction.claims)
     result = generate_report(text, search_results)
 
+    payload = ReportPayload(
+        isi_aduan=result.laporan_text,
+        lokasi_aduan=extraction.context,
+    )
+    submission = asyncio.run(submit_report(payload))
+
     context.status = PipelineStatus.COMPLETED
     context.metadata["pengaduan_result"] = result.model_dump()
+    context.metadata["submission"] = {
+        "success": submission.success,
+        "ticket_number": submission.ticket_number,
+        "error": submission.error,
+    }
 
     return context.model_dump()
