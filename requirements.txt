@@ -31,6 +31,12 @@ pgvector==0.3.2
 # LLM
 groq
 
+#Pillow
+Pillow
+
+beautifulsoup4
+lxml
+
 # Google Search
 google-search-results==2.4.2
 

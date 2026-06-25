@@ -4,64 +4,64 @@
     "success": 7,
     "empty": 0,
     "errors": 0,
-    "avg_ms": 1147,
-    "total_ms": 8039
+    "avg_ms": 2069,
+    "total_ms": 14486
   },
   "results": [
     {
       "file": "180821-sms-640w.jpg.webp",
       "size_kb": 28.7,
-      "elapsed_ms": 1370,
-      "char_count": 291,
-      "text": "Here is the text extracted from the image:\n\n+6282321212461\n\nSMS/MMS\nSunday, August 19, 2018\n\n'Pelanggan WhatsApp Yth'\nAnda Mendapatkan GIRO Rp.75.000.000,-.\nCode Verification\nAnda (15 VAKSIN.COM\nInfo Klik: https://bit.do /HadiahWhatsApp\n\nProgram Undian WhatsApp\nhttps://bit.do/HadiahWhatsApp",
+      "elapsed_ms": 959,
+      "char_count": 203,
+      "text": "'Pelanggan WhatsApp Yth' \nAnda Mendapatkan GIRO Rp.75.000.000,-. \nCode Verification \nAnda (1 5VAKSIN.COM \nInfo Klik: https://bit.do /HadiahWhatsApp \nProgram Undian WhatsApp \nhttps://bit.do/HadiahWhatsApp",
       "status": "ok"
     },
     {
       "file": "test-1.jpg",
       "size_kb": 598.1,
-      "elapsed_ms": 2103,
-      "char_count": 597,
-      "text": "The text in the image is in Indonesian. Here is the extracted text:\n\n**System Message:**\n Messages and calls are end-to-end encrypted. No one outside of this chat, not even WhatsApp, can read or listen to them. Tap to learn more.\n\n**Conversation:**\n\n* 14:32 \nLagi dimana\n* 14:33 \ndi rumah\n* 14:34 \nLagi sibuk kaga\n* 14:34 \nLg kerja ni\n* 14:34 \nKnapa?\n* 14:34 \nGua mau minta tolong nih bisa kaga?\n* 14:34 \nApatu?\n* 14:35 \nLu punya simpanan saldo duit 2 juta kaga gua mau minta tolong nih pinjem dulu besok siang di ganti paling telat nya jam 11\n* 14:35 \nBesok gua lebihin 200k\n* 14:35 \nBuaat apaan?",
+      "elapsed_ms": 810,
+      "char_count": 248,
+      "text": "Lagi dimanadi rumahLagi sibuk kagalg kerja niKnapa?Gua mau minta tolong nih bisa kaga?Apatu?Lu punya simpanan saldo duit 2 juta kaga gua mau minta tolong nih pinjem dulu besok siang di ganti paling telat nya jam 11Besok gua lebihen 200kBbuat apaan?",
       "status": "ok"
     },
     {
       "file": "test-2.jpeg",
       "size_kb": 144.5,
-      "elapsed_ms": 1042,
-      "char_count": 593,
-      "text": "Here is the text extracted from the image:\n\n**Top yellow box:**\nMessages and calls are end-to-end encrypted. No one outside of this chat, not even WhatsApp, can read or listen to them. Tap to learn more.\n\n**3 UNREAD MESSAGES**\n\n**First message:**\nSelamat siang pak/ibu\nKami dari kepolisian\nmenginformasikan bahwa bapak/\nibu melakukan pelanggaran,\nSilakan Buka aplikasi untuk melihat\nsurat tilangnya\n\n**Timestamp:** 14.19\n\n**Second message:**\nJika suratnya sudah dibaca silakan\nsegera datang ke kantor polisi\nyang terdekat\n\n**Timestamp:** 14.19\n\n**File attachment:**\nSurat Tilang-1.0.apk\n8,5 MB",
+      "elapsed_ms": 739,
+      "char_count": 432,
+      "text": "Messages and calls are end-to-end encrypted. No one outside of this chat, not even WhatsApp, can read or listen to them. Tap to learn more.\n3 UNREAD MESSAGES\nSelamat siang pak/ibu\nKami dari kepolisian\nmenginformasikan bahwa bapak/ibu melakukan pelanggaran, \nSilakan Buka aplikasi untuk melihat \nsurat tilangnya\n14.19\nJika suratnya sudah dibaca silakan \nsegera datang ke kantor polisi \nyang terdekat\n14.19\nSurat Tilang-1.0.apk\n8,5 MB",
       "status": "ok"
     },
     {
       "file": "test-3.jpg",
       "size_kb": 108.1,
-      "elapsed_ms": 1256,
-      "char_count": 671,
-      "text": "Here is the text extracted from the image:\n\n**Top banner:**\n- Messages and calls are end-to-end encrypted. No one outside of this chat, not even WhatsApp, can read or listen to them. Tap to learn more.\n\n**Conversation:**\n\n- Selamat malam\n- Mohon maaf kak untuk sementara waktu ini AKUN DANA nya tidak bisa untuk melakukan transaksi untuk saat ini, dikarenakan kami Mendeteksi adanya Aktivitas atau Transaksi yang tidak wajar di akun anda, jadi akun dana nya terpaksa kami BEKUKAN dulu untuk sementara ini. \n- Hubungi Call center kami untuk informasi lebih lanjut Silahkan balas chat ini.\n\n**Other text:**\n- The sender is not in your contact list\n- Block\n- Add to contacts",
+      "elapsed_ms": 2739,
+      "char_count": 359,
+      "text": "Selamat malam \nMohon maaf kak untuk sementara waktu ini AKUN DANA nya tidak bisa untuk melakukan transaksi untuk saat ini, dikarenakan kami Mendeteksi adanya Aktivitas atau Transaksi yang tidak wajar di akun anda, jadi akun dana nya terpaksa kami BEKUKAN dulu untuk sementara ini.\nHubungi Call center kami untuk informasi lebih lanjut Silahkan balas chat ini.",
       "status": "ok"
     },
     {
       "file": "test-4.jpeg",
       "size_kb": 61.2,
-      "elapsed_ms": 846,
-      "char_count": 390,
-      "text": "Here are the texts extracted from the image:\n\n* +62 812-1347-94971 online\n* encrypted. No one outside of this chat, not even WhatsApp, can read or listen to them. Tap to learn more.\n* Surat Undangan Pernikahan Digital .apk\n* 6,6 MB\n* 12.50\n* Kami harap kehadiran nya\n* 12.56\n* Ini siapa........\n* 12.56\n* Silahkan di buka agar lebih jelas dankenal kk\n* 12.56\n* Bpk salah kirim......\n* 12.57",
+      "elapsed_ms": 2081,
+      "char_count": 317,
+      "text": "+62 812-1347-94971\nonline\nencrypted. No one outside of this chat, not even WhatsApp, can read or listen to them. Tap to learn more.\nSurat Undangan Pernikahan Digital .apk\n6,6 MB\n12.50\nKami harap kehadiran nya\n12.56\nIni siapa.......\n12.56\nSilahkan di buka agar lebih jelas dankenal kk\n12.56\nBpk salah kirim......\n12.57",
       "status": "ok"
     },
     {
       "file": "test-5.jpeg",
       "size_kb": 17.1,
-      "elapsed_ms": 687,
-      "char_count": 176,
-      "text": "The text in the image is:\n\n* Selamat siang kak\n* Benar dengan SALMAH\n* Ada Paket di J&T Express Nama SALMAH\n* LIHAT Foto Paket. \n\nThe file information shown is:\n* 5,8 MB \n* APK",
+      "elapsed_ms": 391,
+      "char_count": 106,
+      "text": "Selamat siang kak\nBenar dengan SALMAH\nAda Paket di J&T Express Nama SALMAH\nLIHAT Foto Paket. \n5,8 MB • APK",
       "status": "ok"
     },
     {
       "file": "test-6.jpeg",
       "size_kb": 37.0,
-      "elapsed_ms": 726,
-      "char_count": 566,
-      "text": "Here is the text extracted from the image:\n\nWhatsApp Indonesia\nMengucapkan Selamat !!!\n\nKepada Bpk/Ibu\nSelaku Pengguna WhatsApp\nYang kami Konfirmasi saat ini Melalui\nPesan chat WhatsApp,\nBahwa Anda salah satu pengguna\nWhatsApp Yang terpilih sebagai\nPemenang Undian berhadiah dari\nGEBYAR WHATSAPP INDONESIA\n\nTahap Ke II 2018\n\nKode ID Pemenang anda ;\n47754700\nSilahkan CEK Kode  ID Pemenang\nyang anda Terima dengan daftar\nhadiah yang Tertera di Website\nUndian resmi WhatsApp dibawah ini :\nwww.whatsappinc.yolasite.com\n\nTerima kasih\n\nPelaksana :\nTEAM\nWhatsApp Indonesia",
+      "elapsed_ms": 6762,
+      "char_count": 520,
+      "text": "WhatsApp Indonesia\nMengucapkan Selamat !!!\nKepada Bpk/Ibu\nSelaku Pengguna WhatsApp\nYang kami Konfirmasi saat ini Melalui\nPesan chat WhatsApp,\nBahwa Anda salah satu pengguna\nWhatsApp Yang terpilih sebagai\nPemenang Undian berhadiah dari\nGEBYAR WHATSAPP INDONESIA\n\nTahap Ke II 2018\n\nKode ID Pemenang anda ;\n47754700\nSilahkan CEK Kode  ID Pemenang\nyang anda Terima dengan daftar\nhadiah yang Tertera di Website\nUndian resmi WhatsApp dibawah ini :\nwww.whatsappinc.yolasite.com\n\nTerima kasih\nPelaksana :\nTEAM\nWhatsApp Indonesia",
       "status": "ok"
     }
   ]

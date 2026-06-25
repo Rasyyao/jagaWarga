@@ -2,10 +2,15 @@ import base64
 import os
 from groq import Groq
 from shared.config import get_settings
+from PIL import Image
+import io
 
 settings = get_settings()
 
 _client: Groq | None = None
+
+MAX_SIZE_BYTES = 4 * 1024 * 1024
+MAX_HEIGHT = 720
 
 def get_client() -> Groq:
     global _client
@@ -13,14 +18,47 @@ def get_client() -> Groq:
         _client = Groq(api_key=settings.LLM_API_KEY)
     return _client
 
-OCR_PROMPT = "Extract all text from this image. keep the languange dont translate it"
+OCR_PROMPT = (
+    "Extract all text visible in this image. "
+    "Output ONLY the raw text, no explanations, no formatting, no bullet points. "
+    "Keep the original language, do not translate."
+)
+
+def compress_image(image_bytes: bytes) -> bytes:
+    img = Image.open(io.BytesIO(image_bytes))
+    
+    if img.mode in ("RGBA", "P", "LA"):
+        img = img.convert("RGB")
+    
+    w, h = img.size
+    if h > MAX_HEIGHT:
+        scale = MAX_HEIGHT / h
+        new_w = int(w * scale)
+        img = img.resize((new_w, MAX_HEIGHT), Image.LANCZOS)
+        
+    buffer = io.BytesIO()
+    img.save(buffer, format="JPEG", quality=85)
+    result = buffer.getvalue()
+    
+    if len(result) <= MAX_SIZE_BYTES:
+        return result
+
+    for quality in [75, 60, 50, 35, 20]:
+        buffer = io.BytesIO()
+        img.save(buffer, format="JPEG", quality=quality)
+        result = buffer.getvalue()
+        
+        if len(result) <= MAX_SIZE_BYTES:
+            break
+        
+    return result
 
 def _image_to_base64(image_bytes: bytes) -> str:
     return base64.b64encode(image_bytes).decode("utf-8")
 
-
 async def extract_text(image_bytes: bytes) -> str:
-    """Extract teks dari image bytes via Groq Vision."""
+    image_bytes = compress_image(image_bytes)
+    
     b64 = _image_to_base64(image_bytes)
     
     completion = get_client().chat.completions.create(
@@ -42,8 +80,8 @@ async def extract_text(image_bytes: bytes) -> str:
                 ],
             }
         ],
-        temperature=0,          # deterministic untuk OCR
-        max_completion_tokens=1024,
+        temperature=0,        
+        max_completion_tokens=2048,
         top_p=1,
         stream=False,
         stop=None,
@@ -74,7 +112,7 @@ async def extract_text_from_url(image_url: str) -> str:
             }
         ],
         temperature=0,
-        max_completion_tokens=1024,
+        max_completion_tokens=2048,
         top_p=1,
         stream=False,
         stop=None,
